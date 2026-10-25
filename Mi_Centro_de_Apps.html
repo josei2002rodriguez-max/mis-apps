@@ -1,0 +1,2226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Mis Apps" />
+  <title>Mi Centro de Apps</title>
+  <style>
+    :root {
+      --bg-main: #0b1120;
+      --bg-secondary: #111827;
+      --bg-card: rgba(30, 41, 59, 0.72);
+      --bg-card-hover: rgba(51, 65, 85, 0.85);
+      --bg-modal: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(148, 163, 184, 0.16);
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.35);
+      --danger: #ef4444;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --grid-cols-mobile: 4;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+    }
+
+    [data-theme="light"] {
+      --bg-main: #f1f5f9;
+      --bg-secondary: #e2e8f0;
+      --bg-card: rgba(255, 255, 255, 0.88);
+      --bg-card-hover: rgba(255, 255, 255, 1);
+      --bg-modal: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: rgba(15, 23, 42, 0.1);
+      --shadow-soft: 0 8px 20px -4px rgba(15, 23, 42, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at top right, #1e1b4b 0%, var(--bg-main) 45%, #090d16 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 105px;
+      user-select: none;
+    }
+
+    [data-theme="light"] body {
+      background: linear-gradient(145deg, #e0e7ff 0%, #f1f5f9 50%, #e2e8f0 100%);
+    }
+
+    /* HEADER & TOP BAR */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(11, 17, 32, 0.78);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 16px 12px;
+    }
+
+    [data-theme="light"] .app-header {
+      background: rgba(241, 245, 249, 0.85);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 960px;
+      margin: 0 auto 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    .brand-title h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      line-height: 1.1;
+    }
+
+    .brand-title span {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .icon-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* SEARCH & FILTERS */
+    .search-bar-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 36px 10px 36px;
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      font-size: 14px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .clear-search {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 16px;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* FOLDER CHIPS BAR */
+    .chips-container {
+      max-width: 960px;
+      margin: 10px auto 0;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .chips-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .folder-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 13px;
+      border-radius: 999px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 12.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .folder-chip.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+      box-shadow: 0 3px 10px var(--accent-glow);
+    }
+
+    .chip-count {
+      font-size: 10.5px;
+      opacity: 0.8;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+
+    /* MAIN CONTENT */
+    .main-container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* BASE PATH BANNER */
+    .base-path-bar {
+      background: var(--bg-card);
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+      padding: 9px 13px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+    }
+
+    .base-path-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+    }
+
+    .base-path-text {
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-family: monospace;
+    }
+
+    .small-btn {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* SECTIONS & FOLDERS */
+    .section-block {
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14.5px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+
+    .folder-badge-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .section-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-action-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 6px;
+    }
+
+    .section-action-btn:hover {
+      background: var(--bg-card);
+      color: var(--text-main);
+    }
+
+    /* APPS GRID (PHONE LAUNCHER STYLE) */
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(var(--grid-cols-mobile), minmax(0, 1fr));
+      gap: 14px 10px;
+    }
+
+    @media (min-width: 640px) {
+      .apps-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 18px 14px;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .apps-grid {
+        grid-template-columns: repeat(8, minmax(0, 1fr));
+      }
+    }
+
+    .app-tile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      padding: 6px 4px;
+      border-radius: 16px;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .app-tile:active {
+      transform: scale(0.91);
+    }
+
+    .app-tile:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .app-icon-wrapper {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      position: relative;
+      box-shadow: 0 6px 16px -3px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+      margin-bottom: 7px;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Type Indicator Badge on Icon */
+    .app-mode-badge {
+      position: absolute;
+      bottom: -3px;
+      right: -3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 7px;
+      background: var(--bg-modal);
+      border: 1.5px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    }
+
+    .app-fav-star {
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #f59e0b;
+      color: #fff;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .app-edit-btn {
+      position: absolute;
+      top: 2px;
+      right: 4px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.75);
+      color: #cbd5e1;
+      border: 1px solid rgba(255,255,255,0.15);
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.85;
+      z-index: 3;
+    }
+
+    .app-name {
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.25;
+      color: var(--text-main);
+      max-width: 100%;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
+    }
+
+    .app-tag {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* INTERACTIVE FOLDER BOXES VIEW (iOS / ANDROID FOLDER STYLE) */
+    .folders-box-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    @media (min-width: 640px) {
+      .folders-box-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .folder-box-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 22px;
+      padding: 14px;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+      backdrop-filter: blur(12px);
+    }
+
+    .folder-box-card:active {
+      transform: scale(0.96);
+    }
+
+    .folder-box-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .folder-box-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .folder-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.22);
+      padding: 10px;
+      border-radius: 16px;
+      min-height: 86px;
+      align-items: center;
+      justify-items: center;
+    }
+
+    [data-theme="light"] .folder-mini-grid {
+      background: rgba(15, 23, 42, 0.06);
+    }
+
+    .mini-app-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    /* COLOR GRADIENTS FOR ICONS */
+    .grad-blue { background: linear-gradient(135deg, #2563eb, #06b6d4); color: #fff; }
+    .grad-emerald { background: linear-gradient(135deg, #059669, #34d399); color: #fff; }
+    .grad-rose { background: linear-gradient(135deg, #e11d48, #fb7185); color: #fff; }
+    .grad-purple { background: linear-gradient(135deg, #7c3aed, #c084fc); color: #fff; }
+    .grad-amber { background: linear-gradient(135deg, #d97706, #fbbf24); color: #fff; }
+    .grad-indigo { background: linear-gradient(135deg, #4f46e5, #818cf8); color: #fff; }
+    .grad-teal { background: linear-gradient(135deg, #0d9488, #2dd4bf); color: #fff; }
+    .grad-slate { background: linear-gradient(135deg, #334155, #64748b); color: #fff; }
+
+    /* EMPTY STATE */
+    .empty-state {
+      background: var(--bg-card);
+      border: 1px dashed var(--border-color);
+      border-radius: 20px;
+      padding: 32px 20px;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .empty-state-icon {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    .empty-state h3 {
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .empty-state p {
+      font-size: 13px;
+      color: var(--text-muted);
+      max-width: 380px;
+      margin: 0 auto 16px;
+      line-height: 1.45;
+    }
+
+    /* BOTTOM DOCK (MOBILE LAUNCHER STYLE) */
+    .bottom-dock-wrap {
+      position: fixed;
+      bottom: 14px;
+      left: 0;
+      right: 0;
+      z-index: 60;
+      display: flex;
+      justify-content: center;
+      padding: 0 14px;
+      pointer-events: none;
+    }
+
+    .bottom-dock {
+      pointer-events: auto;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 8px 12px;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+      max-width: 100%;
+    }
+
+    [data-theme="light"] .bottom-dock {
+      background: rgba(255, 255, 255, 0.9);
+      border-color: rgba(15, 23, 42, 0.12);
+    }
+
+    .dock-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 12px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 10.5px;
+      font-weight: 600;
+      transition: background 0.15s, transform 0.15s;
+    }
+
+    .dock-btn:active {
+      transform: scale(0.92);
+    }
+
+    .dock-btn .dock-icon {
+      font-size: 19px;
+    }
+
+    .dock-btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: #ffffff;
+      padding: 8px 16px;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+
+    /* MODALS */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.68);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+    }
+
+    @media (min-width: 640px) {
+      .modal-overlay {
+        align-items: center;
+        padding: 20px;
+      }
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-modal);
+      border: 1px solid var(--border-color);
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      border-radius: 24px 24px 0 0;
+      padding: 20px;
+      overflow-y: auto;
+      box-shadow: var(--shadow-soft);
+      animation: slideUp 0.22s ease-out;
+    }
+
+    @media (min-width: 640px) {
+      .modal-card {
+        border-radius: 24px;
+      }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-header h2 {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .close-modal-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* FORMS */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .form-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      background: var(--bg-main);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 11px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .form-input:focus, .form-select:focus {
+      border-color: var(--accent);
+    }
+
+    /* MODE SWITCH TABS IN MODAL */
+    .mode-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: var(--bg-main);
+      padding: 5px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      border: 1px solid var(--border-color);
+    }
+
+    .mode-tab {
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .mode-tab.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* FILE DROP / UPLOAD BOX */
+    .file-upload-box {
+      border: 2px dashed rgba(59, 130, 246, 0.45);
+      background: rgba(59, 130, 246, 0.06);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .file-upload-box:hover {
+      background: rgba(59, 130, 246, 0.12);
+    }
+
+    .file-status {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    /* EMOJI & COLOR PICKERS */
+    .emoji-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-height: 115px;
+      overflow-y: auto;
+      padding: 8px;
+      background: var(--bg-main);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      margin-top: 6px;
+    }
+
+    .emoji-opt {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: var(--bg-card);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .emoji-opt.selected {
+      border-color: var(--accent);
+      background: rgba(59, 130, 246, 0.25);
+    }
+
+    .color-picker-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .color-swatch {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 2.5px solid transparent;
+      transition: transform 0.15s;
+    }
+
+    .color-swatch.selected {
+      border-color: #ffffff;
+      transform: scale(1.12);
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: #ffffff;
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* FULLSCREEN INTEGRATED APP VIEWER */
+    .app-viewer-overlay {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 500;
+      display: none;
+      flex-direction: column;
+    }
+
+    .app-viewer-overlay.active {
+      display: flex;
+    }
+
+    .viewer-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #fff;
+      flex: 1;
+    }
+
+    /* Floating Return Pill inside Running App */
+    .floating-home-pill {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 999px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .floating-home-pill.minimized {
+      padding: 6px;
+      opacity: 0.65;
+    }
+
+    .floating-home-pill.minimized .pill-actions {
+      display: none;
+    }
+
+    .pill-btn {
+      background: rgba(255, 255, 255, 0.12);
+      border: none;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pill-btn-home {
+      background: #3b82f6;
+    }
+
+    .pill-toggle-btn {
+      background: transparent;
+      border: none;
+      color: #cbd5e1;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 2px 4px;
+    }
+
+    /* GUIDE STEPS */
+    .guide-step {
+      background: var(--bg-main);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .guide-step strong {
+      color: #60a5fa;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* TOAST NOTIFICATION */
+    .toast {
+      position: fixed;
+      bottom: 85px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #10b981;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      z-index: 1000;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="brand">
+        <div class="brand-logo">🚀</div>
+        <div class="brand-title">
+          <h1>Mi Centro de Apps</h1>
+          <span id="statsSubtitle">Cargando tus aplicaciones...</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="toggleViewStyle()" id="viewStyleBtn" title="Cambiar vista (Carpetas / Cuadrícula)">🗂️</button>
+        <button class="icon-btn" onclick="openGuideModal()" title="Cómo poner en pantalla de inicio">📱</button>
+        <button class="icon-btn" onclick="openSettingsModal()" title="Respaldo y Configuración">⚙️</button>
+      </div>
+    </div>
+
+    <!-- SEARCH BAR -->
+    <div class="search-bar-wrap">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Buscar app, carpeta o etiqueta..." oninput="handleSearch()" />
+        <button class="clear-search" id="clearSearchBtn" onclick="clearSearch()">✕</button>
+      </div>
+    </div>
+
+    <!-- FOLDER FILTER CHIPS -->
+    <div class="chips-container" id="folderChips"></div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="main-container">
+    <!-- Base Folder Hyperlink Bar -->
+    <div class="base-path-bar">
+      <div class="base-path-info">
+        <span>📁</span>
+        <div>
+          <div style="font-weight:600; color:var(--text-main);">Ruta base para hipervínculos:</div>
+          <div class="base-path-text" id="basePathDisplay">./ (Misma carpeta del Launcher)</div>
+        </div>
+      </div>
+      <button class="small-btn" onclick="openSettingsModal()">Cambiar ruta</button>
+    </div>
+
+    <!-- DYNAMIC APPS & FOLDERS AREA -->
+    <div id="launcherContent"></div>
+  </main>
+
+  <!-- BOTTOM DOCK -->
+  <div class="bottom-dock-wrap">
+    <nav class="bottom-dock">
+      <button class="dock-btn dock-btn-primary" onclick="openAppModal()">
+        <span class="dock-icon">➕</span>
+        <span>Nueva App</span>
+      </button>
+      <button class="dock-btn" onclick="triggerBatchImport()">
+        <span class="dock-icon">📥</span>
+        <span>Importar .HTMLs</span>
+      </button>
+      <button class="dock-btn" onclick="openFolderModal()">
+        <span class="dock-icon">📁</span>
+        <span>Nueva Carpeta</span>
+      </button>
+      <button class="dock-btn" onclick="exportBackup()">
+        <span class="dock-icon">💾</span>
+        <span>Respaldar</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- HIDDEN BATCH FILE INPUT -->
+  <input type="file" id="batchHtmlInput" accept=".html,.htm" multiple style="display:none" onchange="handleBatchImport(event)" />
+
+  <!-- FULLSCREEN INTEGRATED APP VIEWER -->
+  <div class="app-viewer-overlay" id="appViewer">
+    <div class="floating-home-pill" id="floatingPill">
+      <div class="pill-actions">
+        <button class="pill-btn pill-btn-home" onclick="closeAppViewer()">🏠 Menú</button>
+        <button class="pill-btn" onclick="reloadCurrentApp()" title="Recargar App">🔄</button>
+        <button class="pill-btn" onclick="popOutCurrentApp()" title="Abrir en ventana externa">↗️</button>
+      </div>
+      <button class="pill-toggle-btn" onclick="togglePillMinimize()" id="pillMinimizeBtn" title="Minimizar botón">◀</button>
+    </div>
+    <iframe class="viewer-iframe" id="viewerFrame" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-downloads"></iframe>
+  </div>
+
+  <!-- MODAL: ADD / EDIT APP -->
+  <div class="modal-overlay" id="appModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="appModalTitle">➕ Agregar Aplicación</h2>
+        <button class="close-modal-btn" onclick="closeModal('appModal')">✕</button>
+      </div>
+
+      <input type="hidden" id="editAppId" />
+
+      <div class="mode-tabs">
+        <button type="button" class="mode-tab active" id="tabModeFile" onclick="setAppMode('file')">
+          📄 Archivo .HTML (Celular)
+        </button>
+        <button type="button" class="mode-tab" id="tabModeLink" onclick="setAppMode('link')">
+          🔗 Hipervínculo / Ruta
+        </button>
+      </div>
+
+      <!-- Mode 1: HTML File Upload (Stored in IndexedDB) -->
+      <div id="modeFileSection" class="form-group">
+        <label class="form-label">Selecciona tu archivo .html</label>
+        <div class="file-upload-box" onclick="document.getElementById('singleHtmlInput').click()">
+          <div style="font-size:26px; margin-bottom:4px;">📄</div>
+          <div style="font-size:13px; font-weight:600;">Toca aquí para elegir el archivo .html</div>
+          <div class="form-hint">Se guardará dentro del Launcher y abrirá al instante sin internet</div>
+          <div class="file-status" id="singleFileStatus"></div>
+        </div>
+        <input type="file" id="singleHtmlInput" accept=".html,.htm" style="display:none" onchange="handleSingleFileSelect(event)" />
+      </div>
+
+      <!-- Mode 2: Hyperlink / Local Path -->
+      <div id="modeLinkSection" class="form-group" style="display:none;">
+        <label class="form-label">Dirección URL o Nombre del archivo .html</label>
+        <input type="text" class="form-input" id="appUrlInput" placeholder="Ej: calculadora.html o https://..." />
+        <div class="form-hint">
+          Si escribes solo el nombre (ej: <code>mi_app.html</code>), se unirá automáticamente a tu <strong>Ruta Base</strong> configurada. También puedes pegar cualquier link web.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nombre de la App</label>
+        <input type="text" class="form-input" id="appNameInput" placeholder="Ej: Simulador EUNACOM Pediatría" />
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <div class="form-group">
+          <label class="form-label">Carpeta</label>
+          <select class="form-select" id="appFolderSelect"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Etiqueta corta (Opcional)</label>
+          <input type="text" class="form-input" id="appTagInput" placeholder="Ej: Cirugía, Test, v2" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Ícono de la App (Elige uno o escribe un emoji)</label>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input type="text" class="form-input" id="appIconInput" value="🩺" style="width:65px; text-align:center; font-size:20px;" maxlength="4" />
+          <span class="form-hint" style="margin:0;">Toca cualquiera de abajo para elegir rápido:</span>
+        </div>
+        <div class="emoji-grid" id="appEmojiPicker"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Color del Ícono</label>
+        <div class="color-picker-row" id="appColorPicker"></div>
+      </div>
+
+      <div class="form-group" style="display:flex; align-items:center; gap:8px; margin-top:8px;">
+        <input type="checkbox" id="appFavInput" style="width:18px; height:18px;" />
+        <label for="appFavInput" style="font-size:13px; font-weight:600; cursor:pointer;">⭐ Fijar en Favoritos (Acceso rápido arriba)</label>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn btn-danger" id="deleteAppBtn" style="display:none;" onclick="deleteCurrentApp()">🗑️ Eliminar</button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('appModal')">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="saveApp()">💾 Guardar App</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT FOLDER -->
+  <div class="modal-overlay" id="folderModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="folderModalTitle">📁 Nueva Carpeta</h2>
+        <button class="close-modal-btn" onclick="closeModal('folderModal')">✕</button>
+      </div>
+
+      <input type="hidden" id="editFolderId" />
+
+      <div class="form-group">
+        <label class="form-label">Nombre de la Carpeta</label>
+        <input type="text" class="form-input" id="folderNameInput" placeholder="Ej: Medicina Interna, Juegos, Herramientas..." />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Ícono de la Carpeta</label>
+        <input type="text" class="form-input" id="folderIconInput" value="📁" style="width:70px; text-align:center; font-size:20px;" maxlength="4" />
+        <div class="emoji-grid" id="folderEmojiPicker"></div>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn btn-danger" id="deleteFolderBtn" style="display:none;" onclick="deleteCurrentFolder()">🗑️ Eliminar Carpeta</button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('folderModal')">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="saveFolder()">💾 Guardar Carpeta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SETTINGS, BASE PATH & BACKUP -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>⚙️ Configuración y Respaldos</h2>
+        <button class="close-modal-btn" onclick="closeModal('settingsModal')">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">📁 Dirección / Ruta Base de tus Apps (Para Hipervínculos)</label>
+        <input type="text" class="form-input" id="basePathInput" placeholder="Ej: ./ o file:///storage/emulated/0/Download/MisApps/" />
+        <div class="form-hint">
+          • Si guardas este Launcher en la <strong>misma carpeta</strong> que tus demás archivos <code>.html</code>, déjalo en <code>./</code> y solo escribe el nombre del archivo en cada hipervínculo.<br/>
+          • En Android, si usas el modo de <strong>"Archivo .HTML (Celular)"</strong> al crear una app, no necesitas preocuparte por rutas porque la app queda guardada adentro del Launcher.
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:14px;">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Columnas en celular</label>
+          <select class="form-select" id="gridColsSelect" onchange="updatePreferences()">
+            <option value="3">3 íconos por fila</option>
+            <option value="4" selected>4 íconos por fila</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Tema visual</label>
+          <select class="form-select" id="themeSelect" onchange="updatePreferences()">
+            <option value="dark">🌙 Modo Oscuro</option>
+            <option value="light">☀️ Modo Claro</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%; margin-bottom:18px;" onclick="saveBasePathAndClose()">
+        ✅ Guardar Ruta y Preferencias
+      </button>
+
+      <hr style="border:none; border-top:1px solid var(--border-color); margin: 14px 0;" />
+
+      <div class="form-group">
+        <label class="form-label">💾 Copia de Seguridad Completa (Carpetas + Apps integradas)</label>
+        <div class="form-hint" style="margin-bottom:10px;">
+          Descarga un archivo <code>.json</code> con todo tu menú y el código de tus apps guardadas para no perderlas nunca o pasarlas a otro dispositivo.
+        </div>
+        <div class="btn-row" style="margin-top:8px;">
+          <button class="btn btn-secondary" onclick="exportBackup()">⬇️ Exportar Respaldo</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('restoreInput').click()">⬆️ Restaurar Respaldo</button>
+        </div>
+        <input type="file" id="restoreInput" accept=".json" style="display:none" onchange="importBackup(event)" />
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: MOBILE INSTALLATION GUIDE -->
+  <div class="modal-overlay" id="guideModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>📱 Cómo poner en tu Pantalla de Inicio</h2>
+        <button class="close-modal-btn" onclick="closeModal('guideModal')">✕</button>
+      </div>
+
+      <div class="guide-step">
+        <strong>1. Guarda este archivo en una carpeta fija de tu celular</strong>
+        Descarga este archivo <code>Mi_Centro_de_Apps.html</code> y ponlo en una carpeta fácil de ubicar (por ejemplo, una carpeta llamada <em>"Mis Apps"</em> en la memoria interna).
+      </div>
+
+      <div class="guide-step">
+        <strong>2. Pon el ícono junto a tus demás Apps (Android / iPhone)</strong>
+        • <strong>En Android:</strong> Abre la app <em>"Mis Archivos"</em> (o <em>Cx Explorador de Archivos</em>), busca el archivo <code>Mi_Centro_de_Apps.html</code>, <strong>mantenlo presionado</strong>, toca los 3 puntos (⋮) y elige <strong>"Añadir a pantalla de inicio"</strong>.<br/>
+        • <strong>En iPhone (iOS):</strong> Abre la app <em>Atajos (Shortcuts)</em>, crea un atajo con la acción <strong>"Abrir archivo"</strong> seleccionando este HTML y toca <strong>"Agregar a pantalla de inicio"</strong>.
+      </div>
+
+      <div class="guide-step">
+        <strong>3. ¿Cómo agregar tus apps HTML sin errores de ruta?</strong>
+        • <strong>Método recomendado en celular (📥 Importar .HTMLs):</strong> Toca el botón <strong>"Nueva App"</strong> o <strong>"Importar .HTMLs"</strong> abajo y selecciona tus archivos <code>.html</code>. Quedarán guardados dentro de la memoria del Launcher y se abrirán a pantalla completa con un botón flotante de <strong>"🏠 Menú"</strong> para regresar.<br/>
+        • <strong>Método por Hipervínculo / Carpeta:</strong> Si guardas todos tus <code>.html</code> en la misma carpeta que este Launcher, usa la pestaña <strong>"🔗 Hipervínculo"</strong> y escribe solo el nombre del archivo (ej: <code>quiz_pediatria.html</code>).
+      </div>
+
+      <button class="btn btn-primary" style="width:100%; margin-top:8px;" onclick="closeModal('guideModal')">¡Entendido!</button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toastMsg">Guardado correctamente</div>
+
+  <script>
+    /**************************************************************
+     * BASE DE DATOS LOCAL (IndexedDB) PARA GUARDAR APPS COMPLETAS
+     **************************************************************/
+    const DB_NAME = 'MiCentroDeAppsDB_v1';
+    const STORE_STATE = 'launcher_state';
+    const STORE_HTML = 'apps_html_blobs';
+    let dbInstance = null;
+
+    const EMOJI_LIST = [
+      '🩺','💊','🧬','🫀','🧠','👶','🔪','🚑','📋','🔬',
+      '📚','📝','🎓','💡','📊','🧪','🦠','🩻','💉','🏥',
+      '🛠️','⚙️','🧮','📅','⏱️','🗂️','🚀','⭐','🔥','⚡',
+      '💻','📱','🎮','🎵','🌐','🔗','📄','🧩','🏆','✨'
+    ];
+
+    const COLOR_GRADIENTS = [
+      { id: 'grad-blue', label: 'Azul' },
+      { id: 'grad-emerald', label: 'Esmeralda' },
+      { id: 'grad-purple', label: 'Violeta' },
+      { id: 'grad-rose', label: 'Rojo/Rosa' },
+      { id: 'grad-amber', label: 'Ámbar' },
+      { id: 'grad-indigo', label: 'Índigo' },
+      { id: 'grad-teal', label: 'Turquesa' },
+      { id: 'grad-slate', label: 'Gris' }
+    ];
+
+    let state = {
+      basePath: './',
+      viewStyle: 'sections', // 'sections' | 'folders' | 'grid'
+      gridCols: '4',
+      theme: 'dark',
+      folders: [
+        { id: 'fld_clinica', name: 'Clínica y Rotaciones', icon: '🩺' },
+        { id: 'fld_estudio', name: 'Estudio y Simuladores', icon: '📚' },
+        { id: 'fld_proyectos', name: 'Herramientas y Proyectos', icon: '🛠️' }
+      ],
+      apps: []
+    };
+
+    let activeFolderFilter = 'ALL';
+    let currentAppMode = 'file';
+    let tempUploadedHtml = null;
+    let currentRunningAppId = null;
+
+    function openDB() {
+      return new Promise((resolve, reject) => {
+        if (dbInstance) return resolve(dbInstance);
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE_STATE)) {
+            db.createObjectStore(STORE_STATE);
+          }
+          if (!db.objectStoreNames.contains(STORE_HTML)) {
+            db.createObjectStore(STORE_HTML);
+          }
+        };
+        req.onsuccess = (e) => {
+          dbInstance = e.target.result;
+          resolve(dbInstance);
+        };
+        req.onerror = (e) => reject(e.target.error);
+      });
+    }
+
+    async function dbGet(storeName, key) {
+      const db = await openDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readonly');
+        const req = tx.objectStore(storeName).get(key);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function dbSet(storeName, key, val) {
+      const db = await openDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const req = tx.objectStore(storeName).put(val, key);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function dbDelete(storeName, key) {
+      const db = await openDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const req = tx.objectStore(storeName).delete(key);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function loadState() {
+      try {
+        const saved = await dbGet(STORE_STATE, 'main');
+        if (saved) {
+          state = Object.assign({}, state, saved);
+        } else {
+          // Crear una app de demostración interactiva para probar de inmediato
+          const demoId = 'app_demo_1';
+          const demoHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:sans-serif;background:#0f172a;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:92vh;text-align:center;padding:20px} .card{background:#1e293b;padding:24px;border-radius:20px;max-width:400px;border:1px solid #334155} h2{color:#38bdf8;margin-top:0}</style></head><body><div class="card"><h2>🎉 ¡Visor Integrado Activo!</h2><p>Así se abrirán tus aplicaciones HTML en el celular a pantalla completa.</p><p style="color:#94a3b8;font-size:14px">Arriba a la derecha tienes el botón flotante <b>"🏠 Menú"</b> para volver a tu Launcher cuando quieras (también puedes minimizarlo con la flecha ◀).</p></div></body></html>`;
+          await dbSet(STORE_HTML, demoId, demoHtml);
+          state.apps = [
+            {
+              id: demoId,
+              name: 'App de Prueba (Demo)',
+              tag: 'Ejemplo',
+              folderId: 'fld_proyectos',
+              icon: '🚀',
+              color: 'grad-blue',
+              mode: 'file',
+              url: '',
+              favorite: true,
+              createdAt: Date.now()
+            }
+          ];
+          await saveState();
+        }
+      } catch (e) {
+        console.error('Error cargando estado:', e);
+      }
+      applyThemeAndGrid();
+      renderAll();
+    }
+
+    async function saveState() {
+      try {
+        await dbSet(STORE_STATE, 'main', state);
+      } catch (e) {
+        console.error('Error guardando estado:', e);
+      }
+    }
+
+    function applyThemeAndGrid() {
+      document.documentElement.setAttribute('data-theme', state.theme || 'dark');
+      document.documentElement.style.setProperty('--grid-cols-mobile', state.gridCols || '4');
+      document.getElementById('gridColsSelect').value = state.gridCols || '4';
+      document.getElementById('themeSelect').value = state.theme || 'dark';
+      document.getElementById('basePathInput').value = state.basePath || './';
+      document.getElementById('basePathDisplay').textContent = state.basePath || './';
+    }
+
+    /**************************************************************
+     * RENDERIZADO PRINCIPAL DE CARPETAS E ÍCONOS
+     **************************************************************/
+    function renderAll() {
+      renderStats();
+      renderFolderChips();
+      renderLauncherContent();
+    }
+
+    function renderStats() {
+      const totalApps = state.apps.length;
+      const totalFolders = state.folders.length;
+      document.getElementById('statsSubtitle').textContent =
+        `${totalApps} ${totalApps === 1 ? 'app disponible' : 'apps disponibles'} • ${totalFolders} carpetas`;
+    }
+
+    function renderFolderChips() {
+      const container = document.getElementById('folderChips');
+      let html = `
+        <button class="folder-chip ${activeFolderFilter === 'ALL' ? 'active' : ''}" onclick="setFolderFilter('ALL')">
+          <span>🏠 Todas</span>
+          <span class="chip-count">${state.apps.length}</span>
+        </button>
+      `;
+
+      const favCount = state.apps.filter(a => a.favorite).length;
+      if (favCount > 0) {
+        html += `
+          <button class="folder-chip ${activeFolderFilter === 'FAV' ? 'active' : ''}" onclick="setFolderFilter('FAV')">
+            <span>⭐ Favoritos</span>
+            <span class="chip-count">${favCount}</span>
+          </button>
+        `;
+      }
+
+      state.folders.forEach(f => {
+        const count = state.apps.filter(a => a.folderId === f.id).length;
+        html += `
+          <button class="folder-chip ${activeFolderFilter === f.id ? 'active' : ''}" onclick="setFolderFilter('${f.id}')">
+            <span>${f.icon} ${escapeHtml(f.name)}</span>
+            <span class="chip-count">${count}</span>
+          </button>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function setFolderFilter(folderId) {
+      activeFolderFilter = folderId;
+      renderAll();
+    }
+
+    function toggleViewStyle() {
+      const modes = ['sections', 'folders', 'grid'];
+      const nextIdx = (modes.indexOf(state.viewStyle) + 1) % modes.length;
+      state.viewStyle = modes[nextIdx];
+      const labels = {
+        sections: 'Vista por Secciones activada',
+        folders: 'Vista Cajas de Carpetas activada',
+        grid: 'Vista Cuadrícula Completa activada'
+      };
+      showToast(labels[state.viewStyle]);
+      saveState();
+      renderLauncherContent();
+    }
+
+    function renderLauncherContent() {
+      const container = document.getElementById('launcherContent');
+      const query = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+
+      // Filtrar apps según búsqueda y chip activo
+      let filteredApps = state.apps.filter(app => {
+        const folderObj = state.folders.find(f => f.id === app.folderId);
+        const folderName = folderObj ? folderObj.name.toLowerCase() : '';
+        const matchesQuery = !query ||
+          app.name.toLowerCase().includes(query) ||
+          (app.tag && app.tag.toLowerCase().includes(query)) ||
+          folderName.includes(query);
+
+        if (!matchesQuery) return false;
+        if (activeFolderFilter === 'ALL') return true;
+        if (activeFolderFilter === 'FAV') return !!app.favorite;
+        return app.folderId === activeFolderFilter;
+      });
+
+      if ( state.apps.length === 0 ) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📱</div>
+            <h3>Tu Centro de Apps está listo</h3>
+            <p>Agrega tus archivos <code>.html</code> o hipervínculos tocando <strong>"➕ Nueva App"</strong> o importa varios archivos de una sola vez con <strong>"📥 Importar .HTMLs"</strong>.</p>
+            <button class="btn btn-primary" onclick="openAppModal()">➕ Agregar mi primera App</button>
+          </div>
+        `;
+        return;
+      }
+
+      if (filteredApps.length === 0 && activeFolderFilter === 'ALL' && query) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <h3>Sin resultados para "${escapeHtml(query)}"</h3>
+            <p>Intenta con otro término o limpia el buscador.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+
+      // 1. Si estamos viendo una carpeta específica o buscando o en modo cuadrícula directa
+      if (activeFolderFilter !== 'ALL' || query || state.viewStyle === 'grid') {
+        let headerTitle = 'Todas las Aplicaciones';
+        let canEditFolder = false;
+        if (activeFolderFilter === 'FAV') {
+          headerTitle = '⭐ Favoritos Fijados';
+        } else if (activeFolderFilter !== 'ALL') {
+          const fld = state.folders.find(f => f.id === activeFolderFilter);
+          if (fld) {
+            headerTitle = `${fld.icon} ${escapeHtml(fld.name)}`;
+            canEditFolder = true;
+          }
+        }
+
+        html += `
+          <div class="section-block">
+            <div class="section-header">
+              <div class="section-title">${headerTitle}</div>
+              <div class="section-actions">
+                ${canEditFolder ? `<button class="section-action-btn" onclick="openFolderModal('${activeFolderFilter}')">✏️ Editar carpeta</button>` : ''}
+                ${activeFolderFilter !== 'ALL' ? `<button class="section-action-btn" onclick="setFolderFilter('ALL')">⬅ Ver todas</button>` : ''}
+              </div>
+            </div>
+            ${filteredApps.length > 0
+              ? `<div class="apps-grid">${filteredApps.map(renderAppTile).join('')}</div>`
+              : `<div class="empty-state"><p>Esta carpeta aún no tiene aplicaciones.</p><button class="btn btn-primary" onclick="openAppModal(null, '${activeFolderFilter}')">➕ Agregar App aquí</button></div>`
+            }
+          </div>
+        `;
+        container.innerHTML = html;
+        return;
+      }
+
+      // 2. Sección de Favoritos arriba (si hay apps marcadas con estrella)
+      const favApps = state.apps.filter(a => a.favorite);
+      if (favApps.length > 0) {
+        html += `
+          <div class="section-block">
+            <div class="section-header">
+              <div class="section-title">⭐ Acceso Rápido (Favoritos)</div>
+            </div>
+            <div class="apps-grid">
+              ${favApps.map(renderAppTile).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // 3. Vista estilo Cajas de Carpetas (iOS / OneUI)
+      if (state.viewStyle === 'folders') {
+        html += `
+          <div class="section-header">
+            <div class="section-title">🗂️ Carpetas</div>
+          </div>
+          <div class="folders-box-grid">
+        `;
+        state.folders.forEach(folder => {
+          const folderApps = state.apps.filter(a => a.folderId === folder.id);
+          const miniIcons = folderApps.slice(0, 6).map(a => `
+            <div class="mini-app-icon ${a.color || 'grad-blue'}">${escapeHtml(a.icon || '📱')}</div>
+          `).join('');
+          html += `
+            <div class="folder-box-card" onclick="setFolderFilter('${folder.id}')">
+              <div class="folder-box-header">
+                <div class="folder-box-title">${folder.icon} ${escapeHtml(folder.name)}</div>
+                <span class="chip-count">${folderApps.length}</span>
+              </div>
+              <div class="folder-mini-grid">
+                ${miniIcons || '<span style="grid-column:1/-1;font-size:11px;color:var(--text-muted)">Carpeta vacía</span>'}
+              </div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+        container.innerHTML = html;
+        return;
+      }
+
+      // 4. Vista por Secciones Desplegadas (Por defecto)
+      state.folders.forEach(folder => {
+        const folderApps = state.apps.filter(a => a.folderId === folder.id);
+        html += `
+          <div class="section-block">
+            <div class="section-header">
+              <div class="section-title">
+                <span>${folder.icon}</span>
+                <span>${escapeHtml(folder.name)}</span>
+                <span style="font-size:11.5px; color:var(--text-muted); font-weight:500;">(${folderApps.length})</span>
+              </div>
+              <div class="section-actions">
+                <button class="section-action-btn" onclick="openAppModal(null, '${folder.id}')">➕ App</button>
+                <button class="section-action-btn" onclick="openFolderModal('${folder.id}')">✏️</button>
+              </div>
+            </div>
+            ${folderApps.length > 0
+              ? `<div class="apps-grid">${folderApps.map(renderAppTile).join('')}</div>`
+              : `<div style="padding:12px 14px; border-radius:14px; background:var(--bg-card); border:1px dashed var(--border-color); font-size:12px; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
+                  <span>Sin apps en esta carpeta</span>
+                  <button class="small-btn" onclick="openAppModal(null, '${folder.id}')">+ Agregar</button>
+                 </div>`
+            }
+          </div>
+        `;
+      });
+
+      // Apps sin carpeta asignada (si existieran)
+      const orphanApps = state.apps.filter(a => !state.folders.some(f => f.id === a.folderId));
+      if (orphanApps.length > 0) {
+        html += `
+          <div class="section-block">
+            <div class="section-header">
+              <div class="section-title">📦 Otras Aplicaciones</div>
+            </div>
+            <div class="apps-grid">${orphanApps.map(renderAppTile).join('')}</div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function renderAppTile(app) {
+      const badgeIcon = app.mode === 'file' ? '⚡' : '🔗';
+      const badgeTitle = app.mode === 'file' ? 'App HTML integrada (Offline)' : 'Hipervínculo / Ruta';
+      return `
+        <div class="app-tile" onclick="launchApp('${app.id}')">
+          <button class="app-edit-btn" onclick="event.stopPropagation(); openAppModal('${app.id}')" title="Editar App">✎</button>
+          <div class="app-icon-wrapper ${app.color || 'grad-blue'}">
+            ${app.favorite ? '<span class="app-fav-star">★</span>' : ''}
+            <span>${escapeHtml(app.icon || '📱')}</span>
+            <span class="app-mode-badge" title="${badgeTitle}">${badgeIcon}</span>
+          </div>
+          <div class="app-name">${escapeHtml(app.name)}</div>
+          ${app.tag ? `<div class="app-tag">${escapeHtml(app.tag)}</div>` : ''}
+        </div>
+      `;
+    }
+
+    /**************************************************************
+     * EJECUCIÓN / APERTURA DE APLICACIONES
+     **************************************************************/
+    async function launchApp(appId) {
+      const app = state.apps.find(a => a.id === appId);
+      if (!app) return;
+
+      if (app.mode === 'file') {
+        try {
+          const htmlCode = await dbGet(STORE_HTML, app.id);
+          if (!htmlCode) {
+            showToast('⚠️ No se encontró el archivo HTML de esta app. Edítala y vuelve a subirlo.');
+            return;
+          }
+          currentRunningAppId = app.id;
+          const viewer = document.getElementById('appViewer');
+          const frame = document.getElementById('viewerFrame');
+          frame.srcdoc = htmlCode;
+          viewer.classList.add('active');
+        } catch (err) {
+          console.error(err);
+          showToast('Error al abrir la aplicación');
+        }
+      } else {
+        // Modo Hipervínculo / Ruta
+        let targetUrl = (app.url || '').trim();
+        if (!targetUrl) {
+          showToast('⚠️ Esta app no tiene dirección configurada');
+          return;
+        }
+        const isAbsolute = /^(https?:\/\/|file:\/\/|content:\/\/|\/)/i.test(targetUrl);
+        if (!isAbsolute) {
+          let base = (state.basePath || './').trim();
+          if (base && !base.endsWith('/')) base += '/';
+          targetUrl = base + targetUrl;
+        }
+        window.open(targetUrl, '_blank');
+      }
+    }
+
+    function closeAppViewer() {
+      const viewer = document.getElementById('appViewer');
+      const frame = document.getElementById('viewerFrame');
+      frame.srcdoc = '';
+      viewer.classList.remove('active');
+      currentRunningAppId = null;
+    }
+
+    async function reloadCurrentApp() {
+      if (!currentRunningAppId) return;
+      const htmlCode = await dbGet(STORE_HTML, currentRunningAppId);
+      if (htmlCode) {
+        const frame = document.getElementById('viewerFrame');
+        frame.srcdoc = '';
+        setTimeout(() => { frame.srcdoc = htmlCode; }, 40);
+      }
+    }
+
+    async function popOutCurrentApp() {
+      if (!currentRunningAppId) return;
+      const htmlCode = await dbGet(STORE_HTML, currentRunningAppId);
+      if (htmlCode) {
+        const blob = new Blob([htmlCode], { type: 'text/html;charset=utf-8' });
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, '_blank');
+      }
+    }
+
+    function togglePillMinimize() {
+      const pill = document.getElementById('floatingPill');
+      const btn = document.getElementById('pillMinimizeBtn');
+      pill.classList.toggle('minimized');
+      btn.textContent = pill.classList.contains('minimized') ? '🏠' : '◀';
+    }
+
+    /**************************************************************
+     * CREACIÓN Y EDICIÓN DE APPS
+     **************************************************************/
+    function initPickers() {
+      const appEmojiContainer = document.getElementById('appEmojiPicker');
+      const folderEmojiContainer = document.getElementById('folderEmojiPicker');
+
+      appEmojiContainer.innerHTML = EMOJI_LIST.map(em => `
+        <button type="button" class="emoji-opt" onclick="selectAppEmoji('${em}')">${em}</button>
+      `).join('');
+
+      folderEmojiContainer.innerHTML = EMOJI_LIST.map(em => `
+        <button type="button" class="emoji-opt" onclick="selectFolderEmoji('${em}')">${em}</button>
+      `).join('');
+
+      const colorContainer = document.getElementById('appColorPicker');
+      colorContainer.innerHTML = COLOR_GRADIENTS.map(c => `
+        <div class="color-swatch ${c.id}" data-color="${c.id}" onclick="selectAppColor('${c.id}')" title="${c.label}"></div>
+      `).join('');
+    }
+
+    function selectAppEmoji(em) {
+      document.getElementById('appIconInput').value = em;
+    }
+
+    function selectFolderEmoji(em) {
+      document.getElementById('folderIconInput').value = em;
+    }
+
+    let selectedColorClass = 'grad-blue';
+    function selectAppColor(colorId) {
+      selectedColorClass = colorId;
+      document.querySelectorAll('#appColorPicker .color-swatch').forEach(el => {
+        el.classList.toggle('selected', el.getAttribute('data-color') === colorId);
+      });
+    }
+
+    function setAppMode(mode) {
+      currentAppMode = mode;
+      document.getElementById('tabModeFile').classList.toggle('active', mode === 'file');
+      document.getElementById('tabModeLink').classList.toggle('active', mode === 'link');
+      document.getElementById('modeFileSection').style.display = mode === 'file' ? 'block' : 'none';
+      document.getElementById('modeLinkSection').style.display = mode === 'link' ? 'block' : 'none';
+    }
+
+    function openAppModal(appId = null, defaultFolderId = null) {
+      tempUploadedHtml = null;
+      document.getElementById('singleHtmlInput').value = '';
+      const folderSelect = document.getElementById('appFolderSelect');
+      folderSelect.innerHTML = state.folders.map(f => `
+        <option value="${f.id}">${f.icon} ${escapeHtml(f.name)}</option>
+      `).join('');
+
+      if (appId) {
+        const app = state.apps.find(a => a.id === appId);
+        if (!app) return;
+        document.getElementById('appModalTitle').textContent = '✏️ Editar Aplicación';
+        document.getElementById('editAppId').value = app.id;
+        document.getElementById('appNameInput').value = app.name;
+        document.getElementById('appTagInput').value = app.tag || '';
+        document.getElementById('appFolderSelect').value = app.folderId;
+        document.getElementById('appIconInput').value = app.icon || '🩺';
+        document.getElementById('appUrlInput').value = app.url || '';
+        document.getElementById('appFavInput').checked = !!app.favorite;
+        selectAppColor(app.color || 'grad-blue');
+        setAppMode(app.mode || 'file');
+        document.getElementById('singleFileStatus').textContent =
+          app.mode === 'file' ? '✅ Archivo HTML ya guardado (sube otro solo si deseas actualizarlo)' : '';
+        document.getElementById('deleteAppBtn').style.display = 'inline-flex';
+      } else {
+        document.getElementById('appModalTitle').textContent = '➕ Agregar Aplicación';
+        document.getElementById('editAppId').value = '';
+        document.getElementById('appNameInput').value = '';
+        document.getElementById('appTagInput').value = '';
+        if (defaultFolderId && state.folders.some(f => f.id === defaultFolderId)) {
+          document.getElementById('appFolderSelect').value = defaultFolderId;
+        } else if (activeFolderFilter !== 'ALL' && activeFolderFilter !== 'FAV') {
+          document.getElementById('appFolderSelect').value = activeFolderFilter;
+        }
+        document.getElementById('appIconInput').value = '🩺';
+        document.getElementById('appUrlInput').value = '';
+        document.getElementById('appFavInput').checked = false;
+        selectAppColor('grad-blue');
+        setAppMode('file');
+        document.getElementById('singleFileStatus').textContent = '';
+        document.getElementById('deleteAppBtn').style.display = 'none';
+      }
+
+      document.getElementById('appModal').classList.add('open');
+    }
+
+    function handleSingleFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        tempUploadedHtml = e.target.result;
+        document.getElementById('singleFileStatus').textContent = `✅ Archivo cargado: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+
+        // Autocompletar el nombre si está vacío extrayendo el <title> o nombre de archivo
+        const nameInput = document.getElementById('appNameInput');
+        if (!nameInput.value.trim()) {
+          const titleMatch = tempUploadedHtml.match(/<title[^>]*>([^<]+)<\/title>/i);
+          if (titleMatch && titleMatch[1].trim()) {
+            nameInput.value = titleMatch[1].trim();
+          } else {
+            nameInput.value = file.name.replace(/\.html?$/i, '').replace(/[_-]+/g, ' ');
+          }
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    async function saveApp() {
+      const editId = document.getElementById('editAppId').value;
+      const name = document.getElementById('appNameInput').value.trim();
+      const tag = document.getElementById('appTagInput').value.trim();
+      const folderId = document.getElementById('appFolderSelect').value;
+      const icon = document.getElementById('appIconInput').value.trim() || '📱';
+      const url = document.getElementById('appUrlInput').value.trim();
+      const favorite = document.getElementById('appFavInput').checked;
+
+      if (!name) {
+        showToast('⚠️ Escribe un nombre para la aplicación');
+        return;
+      }
+
+      if (currentAppMode === 'file' && !editId && !tempUploadedHtml) {
+        showToast('⚠️ Selecciona un archivo .html primero');
+        return;
+      }
+
+      if (currentAppMode === 'link' && !url) {
+        showToast('⚠️ Escribe la dirección o nombre del archivo .html');
+        return;
+      }
+
+      const appId = editId || ('app_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6));
+
+      if (currentAppMode === 'file' && tempUploadedHtml) {
+        await dbSet(STORE_HTML, appId, tempUploadedHtml);
+      }
+
+      const appObj = {
+        id: appId,
+        name,
+        tag,
+        folderId,
+        icon,
+        color: selectedColorClass,
+        mode: currentAppMode,
+        url: currentAppMode === 'link' ? url : '',
+        favorite,
+        updatedAt: Date.now()
+      };
+
+      if (editId) {
+        const idx = state.apps.findIndex(a => a.id === editId);
+        if (idx !== -1) state.apps[idx] = appObj;
+      } else {
+        state.apps.push(appObj);
+      }
+
+      await saveState();
+      closeModal('appModal');
+      renderAll();
+      showToast('✅ Aplicación guardada');
+    }
+
+    async function deleteCurrentApp() {
+      const editId = document.getElementById('editAppId').value;
+      if (!editId) return;
+      if (!confirm('¿Eliminar esta aplicación de tu menú?')) return;
+
+      state.apps = state.apps.filter(a => a.id !== editId);
+      await dbDelete(STORE_HTML, editId);
+      await saveState();
+      closeModal('appModal');
+      renderAll();
+      showToast('🗑️ Aplicación eliminada');
+    }
+
+    /**************************************************************
+     * IMPORTACIÓN MASIVA DE ARCHIVOS .HTML (1 CLIC)
+     **************************************************************/
+    function triggerBatchImport() {
+      document.getElementById('batchHtmlInput').value = '';
+      document.getElementById('batchHtmlInput').click();
+    }
+
+    async function handleBatchImport(event) {
+      const files = Array.from(event.target.files || []);
+      if (files.length === 0) return;
+
+      const targetFolder = (activeFolderFilter !== 'ALL' && activeFolderFilter !== 'FAV')
+        ? activeFolderFilter
+        : (state.folders[0] ? state.folders[0].id : 'fld_proyectos');
+
+      let importedCount = 0;
+      for (const file of files) {
+        const text = await readFileAsText(file);
+        const titleMatch = text.match(/<title[^>]*>([^<]+)<\/title>/i);
+        const cleanFileName = file.name.replace(/\.html?$/i, '').replace(/[_-]+/g, ' ');
+        const appName = (titleMatch && titleMatch[1].trim()) ? titleMatch[1].trim() : cleanFileName;
+        const appId = 'app_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+        const randomColor = COLOR_GRADIENTS[importedCount % COLOR_GRADIENTS.length].id;
+
+        await dbSet(STORE_HTML, appId, text);
+        state.apps.push({
+          id: appId,
+          name: appName,
+          tag: 'HTML Local',
+          folderId: targetFolder,
+          icon: guessIconFromName(appName),
+          color: randomColor,
+          mode: 'file',
+          url: '',
+          favorite: false,
+          updatedAt: Date.now()
+        });
+        importedCount++;
+      }
+
+      await saveState();
+      renderAll();
+      showToast(`🎉 ¡${importedCount} ${importedCount === 1 ? 'app importada' : 'apps importadas'} con éxito!`);
+    }
+
+    function readFileAsText(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = (e) => reject(e);
+        reader.readAsText(file);
+      });
+    }
+
+    function guessIconFromName(name) {
+      const lower = name.toLowerCase();
+      if (lower.includes('pediatr') || lower.includes('niño') || lower.includes('neo')) return '👶';
+      if (lower.includes('cirug') || lower.includes('trauma') || lower.includes('quirof')) return '🔪';
+      if (lower.includes('cardio') || lower.includes('ecg') || lower.includes('coraz')) return '🫀';
+      if (lower.includes('neuro') || lower.includes('psiqu')) return '🧠';
+      if (lower.includes('eunacom') || lower.includes('quiz') || lower.includes('test') || lower.includes('examen')) return '📝';
+      if (lower.includes('calc') || lower.includes('dosis') || lower.includes('escala')) return '🧮';
+      if (lower.includes('farmac') || lower.includes('med')) return '💊';
+      if (lower.includes('urgenc')) return '🚑';
+      return '🩺';
+    }
+
+    /**************************************************************
+     * GESTIÓN DE CARPETAS
+     **************************************************************/
+    function openFolderModal(folderId = null) {
+      if (folderId) {
+        const fld = state.folders.find(f => f.id === folderId);
+        if (!fld) return;
+        document.getElementById('folderModalTitle').textContent = '✏️ Editar Carpeta';
+        document.getElementById('editFolderId').value = fld.id;
+        document.getElementById('folderNameInput').value = fld.name;
+        document.getElementById('folderIconInput').value = fld.icon || '📁';
+        document.getElementById('deleteFolderBtn').style.display = state.folders.length > 1 ? 'inline-flex' : 'none';
+      } else {
+        document.getElementById('folderModalTitle').textContent = '📁 Nueva Carpeta';
+        document.getElementById('editFolderId').value = '';
+        document.getElementById('folderNameInput').value = '';
+        document.getElementById('folderIconInput').value = '📁';
+        document.getElementById('deleteFolderBtn').style.display = 'none';
+      }
+      document.getElementById('folderModal').classList.add('open');
+    }
+
+    async function saveFolder() {
+      const editId = document.getElementById('editFolderId').value;
+      const name = document.getElementById('folderNameInput').value.trim();
+      const icon = document.getElementById('folderIconInput').value.trim() || '📁';
+
+      if (!name) {
+        showToast('⚠️ Escribe un nombre para la carpeta');
+        return;
+      }
+
+      if (editId) {
+        const fld = state.folders.find(f => f.id === editId);
+        if (fld) {
+          fld.name = name;
+          fld.icon = icon;
+        }
+      } else {
+        const newId = 'fld_' + Date.now();
+        state.folders.push({ id: newId, name, icon });
+      }
+
+      await saveState();
+      closeModal('folderModal');
+      renderAll();
+      showToast('✅ Carpeta guardada');
+    }
+
+    async function deleteCurrentFolder() {
+      const editId = document.getElementById('editFolderId').value;
+      if (!editId) return;
+      if (state.folders.length <= 1) {
+        showToast('⚠️ Debe existir al menos una carpeta');
+        return;
+      }
+      if (!confirm('¿Eliminar esta carpeta? Las apps que estén adentro se moverán a tu primera carpeta.')) return;
+
+      const fallbackFolderId = state.folders.find(f => f.id !== editId).id;
+      state.apps.forEach(a => {
+        if (a.folderId === editId) a.folderId = fallbackFolderId;
+      });
+      state.folders = state.folders.filter(f => f.id !== editId);
+      if (activeFolderFilter === editId) activeFolderFilter = 'ALL';
+
+      await saveState();
+      closeModal('folderModal');
+      renderAll();
+      showToast('🗑️ Carpeta eliminada');
+    }
+
+    /**************************************************************
+     * CONFIGURACIÓN, RUTA BASE Y RESPALDO COMPLETO (.JSON)
+     **************************************************************/
+    function openSettingsModal() {
+      document.getElementById('basePathInput').value = state.basePath || './';
+      document.getElementById('gridColsSelect').value = state.gridCols || '4';
+      document.getElementById('themeSelect').value = state.theme || 'dark';
+      document.getElementById('settingsModal').classList.add('open');
+    }
+
+    function openGuideModal() {
+      document.getElementById('guideModal').classList.add('open');
+    }
+
+    async function updatePreferences() {
+      state.gridCols = document.getElementById('gridColsSelect').value;
+      state.theme = document.getElementById('themeSelect').value;
+      applyThemeAndGrid();
+      await saveState();
+    }
+
+    async function saveBasePathAndClose() {
+      state.basePath = document.getElementById('basePathInput').value.trim() || './';
+      state.gridCols = document.getElementById('gridColsSelect').value;
+      state.theme = document.getElementById('themeSelect').value;
+      applyThemeAndGrid();
+      await saveState();
+      closeModal('settingsModal');
+      showToast('✅ Configuración actualizada');
+    }
+
+    async function exportBackup() {
+      try {
+        const htmlBlobs = {};
+        for (const app of state.apps) {
+          if (app.mode === 'file') {
+            const code = await dbGet(STORE_HTML, app.id);
+            if (code) htmlBlobs[app.id] = code;
+          }
+        }
+        const payload = {
+          version: 1,
+          exportedAt: new Date().toISOString(),
+          state: state,
+          htmlBlobs: htmlBlobs
+        };
+        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const dateStr = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `Respaldo_Mis_Apps_${dateStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('💾 Respaldo descargado');
+      } catch (e) {
+        console.error(e);
+        showToast('Error al exportar el respaldo');
+      }
+    }
+
+    async function importBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      try {
+        const text = await readFileAsText(file);
+        const data = JSON.parse(text);
+        if (!data.state || !Array.isArray(data.state.apps)) {
+          showToast('⚠️ Archivo de respaldo no válido');
+          return;
+        }
+        state = data.state;
+        if (data.htmlBlobs) {
+          for (const [appId, htmlCode] of Object.entries(data.htmlBlobs)) {
+            await dbSet(STORE_HTML, appId, htmlCode);
+          }
+        }
+        await saveState();
+        applyThemeAndGrid();
+        renderAll();
+        closeModal('settingsModal');
+        showToast('🎉 Respaldo restaurado con éxito');
+      } catch (e) {
+        console.error(e);
+        showToast('⚠️ Error al leer el archivo de respaldo');
+      }
+    }
+
+    /**************************************************************
+     * UTILIDADES GENERALES
+     **************************************************************/
+    function handleSearch() {
+      const val = document.getElementById('searchInput').value;
+      document.getElementById('clearSearchBtn').style.display = val ? 'block' : 'none';
+      renderLauncherContent();
+    }
+
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('clearSearchBtn').style.display = 'none';
+      renderLauncherContent();
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const t = document.getElementById('toastMsg');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Inicializar al cargar
+    window.addEventListener('DOMContentLoaded', () => {
+      initPickers();
+      loadState();
+    });
+  </script>
+</body>
+</html>
